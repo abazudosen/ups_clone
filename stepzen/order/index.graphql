@@ -1,0 +1,33 @@
+type Order {
+  carrier: String
+  createdAt: String
+  shippingCost: Int
+  trackingId: String
+  Address: String
+  City: String
+  Lat: Float
+  Lng: Float
+  trackingItems: TrackingItems
+    @materializer(
+      query: "getTrackingItemsById"
+      arguments: [{ name: "id", field: "trackingId" }]
+    )
+}
+
+type OrderList {
+  name: ID
+  value: Order
+}
+
+type Query {
+  getOrderById(id: ID!): Order
+    @rest(
+      endpoint: "https://ups-clone-336d4-default-rtdb.firebaseio.com/orders/$id.json"
+    )
+
+  getOrders: [OrderList]
+    @rest(
+      endpoint: "https://ups-clone-336d4-default-rtdb.firebaseio.com/orders.json"
+      transforms: [{ pathpattern: [], editor: "objectToArray" }]
+    )
+}
